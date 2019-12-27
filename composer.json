@@ -1,0 +1,13 @@
+{
+    "name": "artem/framework",
+    "description": "simple framework for create a website",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Artem Tyutnev",
+            "email": "artem.tyutnev.developer@gmail.com"
+        }
+    ],
+    "require": {}
+}
