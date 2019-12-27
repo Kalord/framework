@@ -19,4 +19,15 @@ class Request
         if(is_null($key)) return $_GET;
         return isset($_GET[$key]) ? $_GET[$key] : null;
     }
+
+    /**
+     * Получение данных из суперглобального массива $_POST
+     * @param mixed $key
+     * @return mixed
+     */
+    public function post($key = null)
+    {
+        if(is_null($key)) return $_POST;
+        return isset($_POST[$key]) ? $_POST[$key] : null;
+    }
 }
