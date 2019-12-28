@@ -161,13 +161,8 @@ class QueryBuilder
      */
     public function select($selection = ['*'])
     {
-        $this->addPlaceholders($selection);
-
-        $selection = preg_replace('~\w+|\d+|\*~', '?', $selection);
         $selection = implode(', ', $selection);
-
         $this->queryStorage->select = "SELECT $selection FROM $this->tableName";
-
         return $this;
     }
 
@@ -207,10 +202,11 @@ class QueryBuilder
     {
         $condition = $this->parseCondition($condition);
 
-        $this->addPlaceholders([$condition['key'], $condition['value']]);
+        $this->addPlaceholders([$condition['value']]);
         $operator = $condition['operator'];
+        $key = $condition['key'];
 
-        $this->queryStorage->where = "WHERE ? $operator ?";
+        $this->queryStorage->where = "WHERE $key $operator ?";
 
         return $this;
     }

@@ -62,17 +62,6 @@ use app\framework\helpers\ObjectHelper;
 abstract class ActiveRecord
 {
     /**
-     * Текущая таблица
-     * @var string
-     */
-    private $tableName;
-
-    public function __construct()
-    {
-        $this->tableName = $this->tableName();
-    }
-
-    /**
      * @return object
      * @throws Exception
      */
