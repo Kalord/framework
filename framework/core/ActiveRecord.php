@@ -65,9 +65,15 @@ abstract class ActiveRecord
      * @return object
      * @throws Exception
      */
-    public static function query()
+
+    /**
+     * @param string $pathToConfig
+     * @return object
+     * @throws Exception
+     */
+    public static function query($pathToConfig = 'configs/db.php')
     {
-        return new QueryBuilder(self::tableName(), get_called_class(), self::pathToConfig());
+        return new QueryBuilder(self::tableName(), get_called_class(), $pathToConfig);
     }
 
     /**
@@ -77,14 +83,5 @@ abstract class ActiveRecord
     public static function tableName()
     {
         return lcfirst(ObjectHelper::classNameWithoutNamespace(get_called_class()));
-    }
-
-    /**
-     * Установка пути к конфигурационному файлу
-     * @return string
-     */
-    public static function pathToConfig()
-    {
-        return 'configs/db.php';
     }
 }
