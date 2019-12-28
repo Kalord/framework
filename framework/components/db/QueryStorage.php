@@ -17,7 +17,32 @@ class QueryStorage
     /**
      * @var string|null
      */
+    public $innerJoin = null;
+
+    /**
+     * @var string|null
+     */
+    public $leftJoin = null;
+
+    /**
+     * @var string|null
+     */
+    public $rightJoin = null;
+
+    /**
+     * @var string|null
+     */
     public $where = null;
+
+    /**
+     * @var string|null
+     */
+    public $orderBy = null;
+
+    /**
+     * @var string|null
+     */
+    public $limit = null;
 
     /**
      * @return string

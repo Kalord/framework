@@ -68,7 +68,7 @@ class QueryBuilder
 
     /**
      * Добавление данных в массив с заполнителями
-     * @param array|string $data
+     * @param array|string|int $data
      */
     private function addPlaceholders($data)
     {
@@ -80,7 +80,7 @@ class QueryBuilder
             return;
         }
 
-        if(is_string($data))
+        if(is_string($data) || is_int($data))
         {
             $this->placeholders[] = $data;
             return;
@@ -212,6 +212,52 @@ class QueryBuilder
     }
 
     /**
+     * Пример:
+     * sql```
+     * ORDER BY id ASC
+     * ```
+     * php```
+     * Post::query()->orderBy(['id' => SORT_ASC]);
+     * ```
+     * sql```
+     * ORDER BY id DESC
+     * ```
+     * php```
+     * Post::query()->orderBy(['id' => SORT_DESC]);
+     * ```
+     * @param $conditions
+     * @return $this
+     */
+    public function orderBy($conditions)
+    {
+        $column = array_key_first($conditions);
+        $sort = $conditions[$column];
+
+        $sort = $sort == SORT_ASC ? 'ASC' : 'DESC';
+
+        $this->queryStorage->orderBy = "ORDER BY $column $sort";
+
+        return $this;
+    }
+
+    /**
+     * Пример:
+     *      sql```
+     *      LIMIT 10
+     *      ```
+     *      php```
+     *      Post::query()->limit(10);
+     *      ```
+     * @param int $limit
+     * @return object
+     */
+    public function limit($limit)
+    {
+        $this->queryStorage->limit = "LIMIT $limit";
+        return $this;
+    }
+
+    /**
      * @return object
      */
     public function asArray()
@@ -241,12 +287,14 @@ class QueryBuilder
      *      Post::query()->select()->where(['id' => 1])->one();
      *      Post::query()->select()->asArray()->one();
      *      ```
-     * @return object|null
+     * @return object|array|null
      */
     public function one()
     {
         $record = $this->queryExecutor->one($this->build(), $this->getPlaceholders());
         if(!$record) return null;
+
+        if(!$this->isFactoryActiveRecord()) return $record;
 
         return $this->isFactoryActiveRecord() ? FactoryActiveRecord::factory($record, $this->getCurrentModel()) : $record;
     }
@@ -264,12 +312,14 @@ class QueryBuilder
      *      Post::query()->select()->innerJoin('user')->on(['post.id_user' => 'user.id'])->all();
      *      ```
      *
-     * @return object|null
+     * @return array|null
      */
     public function all()
     {
         $records = $this->queryExecutor->all($this->build(), $this->getPlaceholders());
         if(!$records) return null;
+
+        if(!$this->isFactoryActiveRecord()) return $records;
 
         return $this->isFactoryActiveRecord() ? FactoryActiveRecord::factory($records, $this->getCurrentModel()) : $records;
     }
