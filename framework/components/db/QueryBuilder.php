@@ -209,7 +209,7 @@ class QueryBuilder
     public function update(array $set)
     {
         $iterator = 0;
-        $this->queryStorage->set = '';
+        $this->queryStorage->set = "UPDATE $this->tableName SET ";
         foreach($set as $column => $value)
         {
             $iterator++;
@@ -224,18 +224,51 @@ class QueryBuilder
         return $this;
     }
 
+    /**
+     * Пример:
+     *      sql```
+     *      SELECT * FROM post INNER JOIN user ON post.id_user = user.id
+     *      ```
+     *      php```
+     *      Post::query()->select()->innerJoin('user')->on(['post.id_user' => 'user.id']);
+     *      ```
+     * @param string $table
+     * @return object
+     */
     public function innerJoin($table)
     {
         $this->queryStorage->innerJoin = "INNER JOIN $table";
         return $this;
     }
 
+    /**
+     * Пример:
+     *      sql```
+     *      SELECT * FROM post LEFT JOIN user ON post.id_user = user.id
+     *      ```
+     *      php```
+     *      Post::query()->select()->leftJoin('user')->on(['post.id_user' => 'user.id']);
+     *      ```
+     * @param string $table
+     * @return object
+     */
     public function leftJoin($table)
     {
         $this->queryStorage->leftJoin = "LEFT JOIN $table";
         return $this;
     }
 
+    /**
+     * Пример:
+     *      sql```
+     *      SELECT * FROM post RIGHT JOIN user ON post.id_user = user.id
+     *      ```
+     *      php```
+     *      Post::query()->select()->rightJoin('user')->on(['post.id_user' => 'user.id']);
+     *      ```
+     * @param string $table
+     * @return object
+     */
     public function rightJoin($table)
     {
         $this->queryStorage->leftJoin = "RIGHT JOIN $table";
@@ -246,17 +279,17 @@ class QueryBuilder
     {
         $condition = $this->parseCondition($condition);
 
-        $this->addPlaceholders([$condition['value']]);
-        $operator = $condition['operator'];
         $key = $condition['key'];
+        $operator = $condition['operator'];
+        $value = $condition['value'];
 
         if(empty($this->queryStorage->on))
         {
-            $this->queryStorage->on[] = "WHERE $key $operator ?";
+            $this->queryStorage->on[] = "ON $key $operator $value";
         }
         else
         {
-            $this->queryStorage->on[] = "$exp $key $operator ?";
+            $this->queryStorage->on[] = "$exp $key $operator $value";
         }
 
         return $this;

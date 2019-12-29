@@ -43,6 +43,6 @@ class QueryExecutor
 
     public function execute($sql, $placeholders)
     {
-        return $this->db->prepare($sql)->execute();
+        return $this->db->prepare($sql)->execute($placeholders);
     }
 }
