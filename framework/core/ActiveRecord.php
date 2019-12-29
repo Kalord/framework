@@ -62,9 +62,9 @@ use app\framework\helpers\ObjectHelper;
 abstract class ActiveRecord
 {
     /**
-     * @return object
-     * @throws Exception
+     * @var bool
      */
+    private $newRecord = true;
 
     /**
      * @param string $pathToConfig
@@ -74,6 +74,55 @@ abstract class ActiveRecord
     public static function query($pathToConfig = 'configs/db.php')
     {
         return new QueryBuilder(self::tableName(), get_called_class(), $pathToConfig);
+    }
+
+    private function isNewRecord()
+    {
+        return $this->newRecord;
+    }
+
+    /**
+     * Данные были получены
+     */
+    public function fetchedData()
+    {
+        $this->newRecord = false;
+    }
+
+    private function iterationAtObject()
+    {
+        $data = [];
+        foreach ($this as $property => $value) $data[$property] = $value;
+        return $data;
+    }
+
+    /**
+     * Сохранение данных в базу данных.
+     * Пример:
+     *      Создание новой записи
+     *      php```
+     *      $post = new Post();
+     *      $post->title = 'Hello';
+     *      $post->content = 'Data';
+     *      $post->id_user = 1;
+     *      $post->save();
+     *      ```
+     *      Обновление существующей записи
+     *      php```
+     *      $post = Post::query()->select()->where(['id' => 1])->one();
+     *      $post->title = 'New';
+     *      $post->save();
+     *      ```
+     * @return bool
+     * @throws Exception
+     */
+    public function save()
+    {
+        if($this->isNewRecord())
+        {
+            return self::query()->insert($this->iterationAtObject())->execute();
+        }
+        return self::query()->update($this->iterationAtObject())->execute();
     }
 
     /**
