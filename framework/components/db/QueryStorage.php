@@ -17,6 +17,21 @@ class QueryStorage
     /**
      * @var string|null
      */
+    public $insert = null;
+
+    /**
+     * @var string|null
+     */
+    public $update = null;
+
+    /**
+     * @var string|null
+     */
+    public $set = null;
+
+    /**
+     * @var string|null
+     */
     public $innerJoin = null;
 
     /**

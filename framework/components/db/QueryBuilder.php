@@ -166,6 +166,64 @@ class QueryBuilder
         return $this;
     }
 
+    /**
+     * Вставка данных в базу данных
+     * Пример:
+     *      sql```
+     *      INSERT INTO post (title, content) VALUES ('Hello', 'Data');
+     *      ```
+     *      php```
+     *      Post::query()->insert([
+     *          'title' => 'Hello',
+     *          'content' => 'Data'
+     *      ])->execute();
+     *      ```
+     * @param array $data
+     * @return $this
+     */
+    public function insert(array $data)
+    {
+        $columns = implode(', ', array_keys($data));
+        $values = array_values($data);
+
+        $this->addPlaceholders($values);
+        $values = preg_replace('~\w+~', '?', implode(', ', $values));
+
+        $this->queryStorage->insert = "INSERT INTO $this->tableName ($columns) VALUES ($values)";
+
+        return $this;
+    }
+
+    /**
+     * Обновление данных в базе данных
+     * Пример:
+     *      sql```
+     *      UPDATE post SET title = 'Data'
+     *      ```
+     *      php```
+     *      Post::query()->update(['title' => 'Data']);
+     *      ```
+     * @param array $set
+     * @return object
+     */
+    public function update(array $set)
+    {
+        $iterator = 0;
+        $this->queryStorage->set = '';
+        foreach($set as $column => $value)
+        {
+            $iterator++;
+            if($iterator == count($set))
+            {
+                $this->queryStorage->set .= "$column = $value";
+                continue;
+            }
+            $this->queryStorage->set .= "$column = $value, ";
+        }
+
+        return $this;
+    }
+
     public function innerJoin($table)
     {
         $this->queryStorage->innerJoin = "INNER JOIN $table";
