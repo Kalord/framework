@@ -95,8 +95,8 @@ class ActiveRecord extends TestCase
 
     public function testWhereAll()
     {
-        $posts = Post::query($this->pathToConfig)->select()->where(['!=', 'id', 3])->all();
-        $this->assertEquals(2, count($posts));
+        $posts = Post::query($this->pathToConfig)->select()->where(['!=', 'id_user', 1])->all();
+        $this->assertTrue(empty($posts));
 
         $posts = Post::query($this->pathToConfig)->select()->where(['>', 'id', 100])->all();
         $this->assertNull($posts);
@@ -112,6 +112,80 @@ class ActiveRecord extends TestCase
 
         $post = Post::query($this->pathToConfig)->select()->where(['id' => 100])->one();
         $this->assertNull($post);
+    }
+
+    public function testAndWhere()
+    {
+        $post = Post::query($this->pathToConfig)->select()->where(['id' => 1])->andWhere(['id_user' => 1])->one();
+        $this->assertIsObject($post);
+    }
+
+    public function testOrWhere()
+    {
+        $post = Post::query($this->pathToConfig)->select()->where(['id' => 1])->orWhere(['id' => 2])->one();
+        $this->assertIsObject($post);
+    }
+
+    public function testInnerJoin()
+    {
+        $posts = Post::query($this->pathToConfig)->select()->
+                                                  innerJoin('user')->
+                                                  on(['post.id_user' => 'user.id'])->
+                                                  all();
+        $post = array_shift($posts);
+
+        $this->assertIsObject($post);
+        $this->assertObjectHasAttribute('title', $post);
+        $this->assertObjectHasAttribute('login', $post);
+    }
+
+    public function testLeftJoin()
+    {
+        $posts = Post::query($this->pathToConfig)->select()->leftJoin('user')->on(['post.id_user' => 'user.id'])->all();
+        $post = array_shift($posts);
+        $this->assertIsObject($post);
+        $this->assertObjectHasAttribute('title', $post);
+        $this->assertObjectHasAttribute('login', $post);
+    }
+
+    public function testRightJoin()
+    {
+        $posts = Post::query($this->pathToConfig)->select()->rightJoin('user')->on(['post.id_user' => 'user.id'])->all();
+        $post = array_shift($posts);
+        $this->assertIsObject($post);
+        $this->assertObjectHasAttribute('title', $post);
+        $this->assertObjectHasAttribute('login', $post);
+    }
+
+    public function testInsert()
+    {
+        $result = Post::query($this->pathToConfig)->insert([
+            'title' => 'TEST',
+            'content' => 'TEST',
+            'id_user' => 1
+        ])->execute();
+        $this->assertTrue($result);
+
+        $post = Post::query($this->pathToConfig)->select()->where(['title' => 'TEST'])->one();
+        $this->assertIsObject($post);
+        $this->assertObjectHasAttribute('title', $post);
+    }
+
+    public function testUpdate()
+    {
+        $result = Post::query($this->pathToConfig)->update(['title' => "'TEST'"])->where(['id' => 1])->execute();
+        $this->assertTrue($result);
+
+        $post = Post::query($this->pathToConfig)->select()->where(['id' => 1])->one();
+        $this->assertIsObject($post);
+        $this->assertEquals('TEST', $post->title);
+
+        $result = Post::query($this->pathToConfig)->update(['title' => "'Hello'"])->execute();
+        $this->assertTrue($result);
+
+        $post = Post::query($this->pathToConfig)->select()->where(['id' => 1])->one();
+        $this->assertIsObject($post);
+        $this->assertEquals('Hello', $post->title);
     }
 
     public function testIsArrayAll()
