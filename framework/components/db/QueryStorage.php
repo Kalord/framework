@@ -27,6 +27,11 @@ class QueryStorage
     /**
      * @var string|null
      */
+    public $delete = null;
+
+    /**
+     * @var string|null
+     */
     public $set = null;
 
     /**

@@ -215,12 +215,18 @@ class QueryBuilder
             $iterator++;
             if($iterator == count($set))
             {
-                $this->queryStorage->set .= "$column = $value";
+                $this->queryStorage->set .= "$column = '$value'";
                 continue;
             }
-            $this->queryStorage->set .= "$column = $value, ";
+            $this->queryStorage->set .= "$column = '$value', ";
         }
 
+        return $this;
+    }
+
+    public function delete()
+    {
+        $this->queryStorage->delete = "DELETE FROM $this->tableName";
         return $this;
     }
 
