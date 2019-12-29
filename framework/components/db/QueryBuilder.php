@@ -166,6 +166,54 @@ class QueryBuilder
         return $this;
     }
 
+    public function innerJoin($table)
+    {
+        $this->queryStorage->innerJoin = "INNER JOIN $table";
+        return $this;
+    }
+
+    public function leftJoin($table)
+    {
+        $this->queryStorage->leftJoin = "LEFT JOIN $table";
+        return $this;
+    }
+
+    public function rightJoin($table)
+    {
+        $this->queryStorage->leftJoin = "RIGHT JOIN $table";
+        return $this;
+    }
+
+    public function on($condition, $exp = null)
+    {
+        $condition = $this->parseCondition($condition);
+
+        $this->addPlaceholders([$condition['value']]);
+        $operator = $condition['operator'];
+        $key = $condition['key'];
+
+        if(empty($this->queryStorage->on))
+        {
+            $this->queryStorage->on[] = "WHERE $key $operator ?";
+        }
+        else
+        {
+            $this->queryStorage->on[] = "$exp $key $operator ?";
+        }
+
+        return $this;
+    }
+
+    public function andOn($condition)
+    {
+        return $this->on($condition, 'AND');
+    }
+
+    public function orOn($condition)
+    {
+        return $this->on($condition, 'OR');
+    }
+
     /**
      * Примеры:
      *      sql```
@@ -196,9 +244,10 @@ class QueryBuilder
      *      Post::query()->where(['!=', 'title', 'Data']);
      *      ```
      * @param array $condition
+     * @param string|null $exp
      * @return object
      */
-    public function where($condition)
+    public function where($condition, $exp = null)
     {
         $condition = $this->parseCondition($condition);
 
@@ -206,9 +255,26 @@ class QueryBuilder
         $operator = $condition['operator'];
         $key = $condition['key'];
 
-        $this->queryStorage->where = "WHERE $key $operator ?";
+        if(empty($this->queryStorage->where))
+        {
+            $this->queryStorage->where[] = "WHERE $key $operator ?";
+        }
+        else
+        {
+            $this->queryStorage->where[] = "$exp $key $operator ?";
+        }
 
         return $this;
+    }
+
+    public function andWhere($condition)
+    {
+        return $this->where($condition, 'AND');
+    }
+
+    public function orWhere($condition)
+    {
+        return $this->where($condition, 'OR');
     }
 
     /**

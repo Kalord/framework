@@ -30,9 +30,14 @@ class QueryStorage
     public $rightJoin = null;
 
     /**
-     * @var string|null
+     * @var array
      */
-    public $where = null;
+    public $on = [];
+
+    /**
+     * @var array
+     */
+    public $where = [];
 
     /**
      * @var string|null
@@ -52,10 +57,14 @@ class QueryStorage
         $sql = '';
         foreach ($this as $subCommand)
         {
-            if($subCommand != null)
+            if(is_string($subCommand))
             {
                 $sql .= "$subCommand ";
                 continue;
+            }
+            if(is_array($subCommand))
+            {
+                foreach ($subCommand as $exp) $sql .= "$exp ";
             }
         }
         return $sql;
