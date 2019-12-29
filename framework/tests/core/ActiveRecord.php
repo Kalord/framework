@@ -188,6 +188,15 @@ class ActiveRecord extends TestCase
         $this->assertEquals('Hello', $post->title);
     }
 
+    public function testDelete()
+    {
+        $result = Post::query($this->pathToConfig)->delete()->where(['>', 'id', 3])->execute();
+        $this->assertTrue($result);
+
+        $posts = Post::query($this->pathToConfig)->select()->all();
+        $this->assertEquals(3, count($posts));
+    }
+
     public function testIsArrayAll()
     {
         $posts = Post::query($this->pathToConfig)->select()->asArray()->all();
@@ -221,5 +230,19 @@ class ActiveRecord extends TestCase
         $posts = Post::query($this->pathToConfig)->select()->orderBy(['id' => SORT_DESC])->all();
         $maxId = $posts[0]->id;
         foreach($posts as $post) $this->assertTrue($maxId >= $post->id);
+    }
+
+    public function testSave()
+    {
+        $post = Post::query($this->pathToConfig)->select()->where(['id' => 1])->one();
+        $post->title = 'New';
+        $this->assertTrue($post->save());
+
+        $post = Post::query($this->pathToConfig)->select()->where(['id' => 1])->one();
+        $this->assertEquals('New', $post->title);
+
+        $post = Post::query($this->pathToConfig)->select()->where(['id' => 1])->one();
+        $post->title = 'Hello';
+        $this->assertTrue($post->save());
     }
 }
