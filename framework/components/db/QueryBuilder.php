@@ -457,8 +457,6 @@ class QueryBuilder
         $record = $this->queryExecutor->one($this->build(), $this->getPlaceholders());
         if(!$record) return null;
 
-        if(!$this->isFactoryActiveRecord()) return $record;
-
         return $this->isFactoryActiveRecord() ? FactoryActiveRecord::factory($record, $this->getCurrentModel()) : $record;
     }
 
@@ -481,8 +479,6 @@ class QueryBuilder
     {
         $records = $this->queryExecutor->all($this->build(), $this->getPlaceholders());
         if(!$records) return null;
-
-        if(!$this->isFactoryActiveRecord()) return $records;
 
         return $this->isFactoryActiveRecord() ? FactoryActiveRecord::factory($records, $this->getCurrentModel()) : $records;
     }
