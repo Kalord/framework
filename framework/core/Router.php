@@ -3,6 +3,8 @@
 namespace app\framework\core;
 
 use Exception;
+use app\framework\core\App;
+use app\framework\helpers\RegExpHelper;
 
 /**
  * Роутер определяет контроллер и действие
@@ -31,7 +33,7 @@ use Exception;
  * Передача аргументов в маршрут:
  *      configs/routes.php:
  *      return [
- *          '/post/<id:int>' => 'post/detail'
+ *          '/post/<int>' => 'post/detail'
  *      ];
  *
  *      URL: http://site.local/post/1
@@ -39,7 +41,7 @@ use Exception;
  *
  *      configs/routes.php:
  *      return [
- *          '/post/<category:string>/<id:int> => 'post/detail'
+ *          '/post/<string>/<int> => 'post/detail'
  *      ];
  *
  *      URL: http://site.local/post/sport/1
@@ -51,31 +53,128 @@ use Exception;
 class Router
 {
     /**
+     * @var string
+     */
+    const HOME_ROUTE = 'site/index';
+
+    /**
+     * @var string
+     */
+    const DEFAULT_ACTION = 'index';
+
+    /**
      * Массив маршрутов заданных в конфигурационном файле
      * @var array
      */
     private $routes;
 
     /**
+     * Пространство имен для контроллеров
+     * @var string
+     */
+    private $namespace;
+
+    /**
      * Router constructor.
      * @param string $config
+     * @param string $namespace
      * @throws Exception
      */
-    public function __construct($config = 'configs/routes.php')
+    public function __construct($config = 'configs/routes.php', $namespace = '\app\controllers\\')
     {
         if(!file_exists($config))
         {
             throw new Exception("File with routes not found in $config");
         }
         $this->routes = require $config;
+        $this->namespace = $namespace;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNamespace()
+    {
+        return $this->namespace;
+    }
+
+    /**
+     * @param array $route
+     * @return bool
+     */
+    private function hasAction(array $route)
+    {
+        return count($route) == 2;
+    }
+
+    /**
+     * Проверяет, сделан ли запрос на домашнюю страницу
+     * @param string $url
+     * @return array|null
+     */
+    private function homePage($url)
+    {
+        if($url == '/' && array_key_exists('/', $this->routes)) return [$this->routes['/'], []];
+        if($url == '/') return [self::HOME_ROUTE, []];
+        return null;
+    }
+
+    /**
+     * Ищет маршруты в конфигурационном файле
+     * @param string $url
+     * @return array|null
+     */
+    private function findRouteInConfig($url)
+    {
+        if(empty($this->routes)) return null;
+
+        foreach($this->routes as $urlPattern => $route)
+        {
+            $urlPattern = RegExpHelper::toRegExp($urlPattern);
+            $args = [];
+            if(preg_match_all($urlPattern, $url, $args, PREG_SET_ORDER))
+            {
+                $args = array_shift($args);
+                array_shift($args);
+                return [$route, $args];
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Встраивает маршрут
+     * @param array $route
+     */
+    private function inlineRoute($route)
+    {
+        $dataRoute = explode('/', array_shift($route));
+        if(!$this->hasAction($dataRoute)) $dataRoute[] = self::DEFAULT_ACTION;
+        $dataArgs = array_shift($route);
+
+        $ControllerName = ucfirst(array_shift($dataRoute)) . 'Controller';
+        $actionName = 'action' . ucfirst(array_shift($dataRoute));
+        $ControllerName = $this->getNamespace() . $ControllerName;
+
+        call_user_func_array([new $ControllerName, $actionName], $dataArgs);
     }
 
     /**
      * Запуск приложения
      * @return void
+     * @throws Exception
      */
     public function run()
     {
+        $url = App::component()->http->getUrl();
 
+        if(($route = $this->homePage($url)) || ($route = $this->findRouteInConfig($url)))
+        {
+            $this->inlineRoute($route);
+            return;
+        }
+
+        $this->inlineRoute([substr($url, 1), []]);
     }
 }
