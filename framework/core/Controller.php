@@ -2,7 +2,9 @@
 
 namespace app\framework\core;
 
+use Exception;
 use app\framework\core\IDispatcher;
+use app\framework\core\App;
 
 /**
  * Базовый класс для контроллеров
@@ -40,5 +42,24 @@ abstract class Controller implements IDispatcher
     public function dispatch()
     {
         var_dump('In dispatch');
+    }
+
+    /**
+     * @param string $url
+     * @param void
+     * @throws Exception
+     */
+    protected function redirect($url)
+    {
+        App::component()->http->redirect($url);
+    }
+
+    /**
+     * @return void;
+     * @throws Exception
+     */
+    protected function goHome()
+    {
+        $this->redirect('/');
     }
 }
