@@ -36,4 +36,16 @@ class App
     {
         return new FactoryComponent($pathToConfig);
     }
+
+    /**
+     * Запуск приложения
+     * @param string $config
+     */
+    public static function run($config = 'configs/app.php')
+    {
+        $config = require $config;
+        $router = $config['router'];
+
+        (new $router)->run();
+    }
 }

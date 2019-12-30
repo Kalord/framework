@@ -161,7 +161,7 @@ class Router
     }
 
     /**
-     * Запуск приложения
+     * Запуск роутера
      * @return void
      * @throws Exception
      */

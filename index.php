@@ -1,6 +1,6 @@
 <?php
 require 'vendor/autoload.php';
 
-use app\framework\core\Router;
+use app\framework\core\App;
 
-(new Router())->run();
+App::run();
