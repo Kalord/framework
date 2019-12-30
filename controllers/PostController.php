@@ -16,5 +16,7 @@ class PostController extends Controller
     {
         $post = Post::get($id);
         var_dump($post);
+
+
     }
 }

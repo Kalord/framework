@@ -5,6 +5,7 @@ namespace app\framework\core;
 use Exception;
 use app\framework\core\App;
 use app\framework\helpers\RegExpHelper;
+use app\framework\core\View;
 
 /**
  * Роутер определяет контроллер и действие
@@ -179,7 +180,7 @@ class Router
         {
             $interfaces = class_implements($this->baseController);
             if(key_exists($this->dispatcherInterface, $interfaces)) $ControllerName->dispatch();
-            call_user_func_array([$ControllerName, $actionName], $dataArgs);
+            View::render(call_user_func_array([$ControllerName, $actionName], $dataArgs));
             return;
         }
         throw new Exception("Controller don't have parent base controller $this->baseController");

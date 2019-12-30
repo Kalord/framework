@@ -5,6 +5,7 @@ namespace app\framework\core;
 use Exception;
 use app\framework\core\IDispatcher;
 use app\framework\core\App;
+use app\framework\core\View;
 
 /**
  * Базовый класс для контроллеров
@@ -13,6 +14,26 @@ use app\framework\core\App;
  */
 abstract class Controller implements IDispatcher
 {
+    /**
+     * @var string
+     */
+    protected $directoryWithViews = 'views';
+
+    /**
+     * @var string
+     */
+    protected $layout = 'views/layout/main.php';
+
+    /**
+     * @var object
+     */
+    private $view;
+
+    public function __construct()
+    {
+        $this->view = new View($this->directoryWithViews, $this->layout);
+    }
+
     /**
      * Данный метод получает набор классов диспетчеров и выполняет их каждый раз при запуске действия
      *
@@ -61,5 +82,16 @@ abstract class Controller implements IDispatcher
     protected function goHome()
     {
         $this->redirect('/');
+    }
+
+    /**
+     * @param string $pathToView
+     * @param array $data
+     * @return string
+     * @throws Exception
+     */
+    protected function render($pathToView, array $data)
+    {
+        return $this->view->prepareView($pathToView, $data);
     }
 }
