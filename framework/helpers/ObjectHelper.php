@@ -20,4 +20,15 @@ class ObjectHelper
         preg_match('~\w+$~', $className, $matches);
         return $matches[0];
     }
+
+    /**
+     * @param object $object
+     * @return array
+     */
+    public static function iterationAtObject($object)
+    {
+        $data = [];
+        foreach($object as $property => $value) $data[$property] = $value;
+        return $data;
+    }
 }

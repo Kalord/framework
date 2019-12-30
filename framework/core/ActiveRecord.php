@@ -67,6 +67,12 @@ abstract class ActiveRecord
     private $newRecord = true;
 
     /**
+     * Первоначальный слепок данных
+     * @var array
+     */
+    private $dataCast = [];
+
+    /**
      * @param string $pathToConfig
      * @return object
      * @throws Exception
@@ -81,20 +87,69 @@ abstract class ActiveRecord
         return $this->newRecord;
     }
 
-    /**
-     * Данные были получены
-     */
-    public function fetchedData()
+    public function getDataCast()
     {
+        $data = $this->dataCast;
+        $modified = $this->getModifiedData();
+
+        foreach($modified as $property => $value) $data[$property] = $value;
+
+        return $data;
+    }
+
+    /**
+     * Сохранение данных в слепок данных
+     * @param string $key
+     * @param string $value
+     */
+    public function addDataCast($key, $value)
+    {
+        $this->dataCast[$key] = $value;
+    }
+
+    /**
+     * @see https://www.php.net/manual/ru/language.oop5.overloading.php#object.set
+     * Данный метод будет выполнен при записи данных в несуществующие свойства.
+     * @param mixed $property
+     * @param mixed $value
+     */
+    public function __set($property, $value)
+    {
+        $this->addDataCast($property, $value);
+        $this->$property = $value;
+    }
+
+    /**
+     * Преобразование данных из массива в публичные свойства
+     * @param array $data
+     */
+    public function fetchData(array $data)
+    {
+        foreach($data as $property => $value)
+        {
+            $this->$property = $value;
+            $this->addDataCast($property, $value);
+        }
+
         $this->newRecord = false;
     }
 
-    private function iterationAtObject()
+    /**
+     * @return array
+     */
+    private function getModifiedData()
     {
-        $properties = get_object_vars($this);
-        array_shift($properties);
-        array_shift($properties);
-        return $properties;
+        $modifiedData = [];
+        foreach(ObjectHelper::iterationAtObject($this) as $property => $value)
+        {
+            if(array_key_exists($property, $this->dataCast) &&
+               $this->dataCast[$property] != $this->$property
+            )
+            {
+                $modifiedData[$property] = $value;
+            }
+        }
+        return $modifiedData;
     }
 
     /**
@@ -121,14 +176,14 @@ abstract class ActiveRecord
     {
         if($this->isNewRecord())
         {
-            return self::query()->insert($this->iterationAtObject())->execute();
+            return self::query()->insert($this->getDataCast())->execute();
         }
         /**
          * TODO: Переделать реализацию данной части метода
          * @start
          * @see https://trello.com/c/NE5skg8X/6-%D0%BF%D0%B5%D1%80%D0%B5%D0%B4%D0%B5%D0%BB%D0%B0%D1%82%D1%8C-%D1%80%D0%B5%D0%B0%D0%BB%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D1%8E-%D0%B4%D0%B0%D0%BD%D0%BD%D0%BE%D0%B9-%D1%87%D0%B0%D1%81%D1%82%D0%B8-%D0%BC%D0%B5%D1%82%D0%BE%D0%B4%D0%B0
          */
-        return self::query()->update($this->iterationAtObject())->
+        return self::query()->update($this->getModifiedData())->
                               where(['id' => $this->id])->
                               execute();
         /**

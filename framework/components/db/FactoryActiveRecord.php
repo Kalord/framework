@@ -24,15 +24,13 @@ class FactoryActiveRecord
             foreach($data as $record)
             {
                 $activeRecord = new $model;
-                foreach($record as $property => $value) $activeRecord->$property = $value;
-                $activeRecord->fetchedData();
+                $activeRecord->fetchData($record);
                 $records[] = $activeRecord;
             }
             return $records;
         }
         $record = new $model;
-        foreach($data as $property => $value) $record->$property = $value;
-        $record->fetchedData();
+        $record->fetchData($data);
         return $record;
     }
 }
