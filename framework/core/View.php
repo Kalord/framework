@@ -3,6 +3,8 @@
 namespace app\framework\core;
 
 use Exception;
+use app\framework\core\RenderProvider;
+use app\framework\helpers\ObjectHelper;
 
 /**
  * @package app\framework\core
@@ -60,36 +62,51 @@ class View
 
     /**
      * return void
+     * @param string
      * @throws Exception
      */
-    private function getLayout()
+    private function getLayout($content)
     {
         if(!file_exists($this->layout)) throw new Exception("Layout in $this->layout not found");
         require $this->layout;
     }
 
-    /**
-     * @param string $path
-     * @param array $data
-     * @return string
-     * @throws Exception
-     */
-    public function prepareView($path, array $data)
+    private function preparePathToView($path, $directory)
     {
-        $this->buffering();
-        $this->getView($path);
-        $content = $this->getBuffer();
+        $directory = ObjectHelper::classNameWithoutNamespace($directory);
+        $directory = mb_strtolower(preg_replace('~Controller$~', '', $directory));
+        $sep = DIRECTORY_SEPARATOR;
 
-        $this->buffering();
-        $this->getLayout();
-        return $this->getBuffer();
+        return $this->directoryWithViews . $sep . $directory . $sep . $path . '.php';
     }
 
     /**
-     * @param string $view
+     * @param string $path
+     * @param string $directory
+     * @param array $data
+     * @return object
+     * @throws Exception
      */
-    public static function render($view)
+    public function prepareView($path, $directory, array $data)
     {
-        echo $view;
+        $this->buffering();
+        $this->getView($this->preparePathToView($path, $directory));
+        $content = $this->getBuffer();
+
+        $this->buffering();
+        $this->getLayout($content);
+        $view = $this->getBuffer();
+
+        return new RenderProvider($view, $content);
+    }
+
+    /**
+     * @param \app\framework\core\RenderProvider $renderProvider
+     * @return void
+     */
+    public static function render(RenderProvider $renderProvider)
+    {
+        $content = $renderProvider->content;
+        echo $renderProvider->view;
     }
 }

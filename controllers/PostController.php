@@ -15,8 +15,9 @@ class PostController extends Controller
     public function actionDetail($id)
     {
         $post = Post::get($id);
-        var_dump($post);
 
-
+        return $this->render('detail', [
+            'post' => $post
+        ]);
     }
 }

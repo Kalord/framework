@@ -90,8 +90,8 @@ abstract class Controller implements IDispatcher
      * @return string
      * @throws Exception
      */
-    protected function render($pathToView, array $data)
+    protected function render($pathToView, array $data = [])
     {
-        return $this->view->prepareView($pathToView, $data);
+        return $this->view->prepareView($pathToView, get_class($this), $data);
     }
 }
