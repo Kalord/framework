@@ -1,4 +1,4 @@
 <?php
 return [
-    '/post/<string>/<int>' => 'post/detail'
+    'post/<int>' => 'post/detail'
 ];

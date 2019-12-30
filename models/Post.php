@@ -12,13 +12,8 @@ use app\framework\core\ActiveRecord;
  */
 class Post extends ActiveRecord
 {
-    public static function pathToConfig()
+    public static function get($id)
     {
-        return '../configs/db-test.php';
-    }
-
-    public function getId()
-    {
-        return $this->id;
+        return self::query()->select()->where(['id' => $id])->one();
     }
 }

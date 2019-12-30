@@ -2,6 +2,8 @@
 
 namespace app\controllers;
 
+use app\models\Post;
+
 class PostController
 {
     public function actionIndex()
@@ -9,9 +11,9 @@ class PostController
         var_dump('Home page for post');
     }
 
-    public function actionDetail($category, $id)
+    public function actionDetail($id)
     {
-        var_dump("Current category: $category");
-        var_dump("Id: $id");
+        $post = Post::get($id);
+        var_dump($post);
     }
 }
