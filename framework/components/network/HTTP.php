@@ -19,4 +19,12 @@ class HTTP
     {
         return new Request();
     }
+
+    /**
+     * @return string
+     */
+    public function getUrl()
+    {
+        return $_SERVER['REQUEST_URI'];
+    }
 }
