@@ -173,14 +173,14 @@ class ActiveRecord extends TestCase
 
     public function testUpdate()
     {
-        $result = Post::query($this->pathToConfig)->update(['title' => "'TEST'"])->where(['id' => 1])->execute();
+        $result = Post::query($this->pathToConfig)->update(['title' => 'TEST'])->where(['id' => 1])->execute();
         $this->assertTrue($result);
 
         $post = Post::query($this->pathToConfig)->select()->where(['id' => 1])->one();
         $this->assertIsObject($post);
         $this->assertEquals('TEST', $post->title);
 
-        $result = Post::query($this->pathToConfig)->update(['title' => "'Hello'"])->execute();
+        $result = Post::query($this->pathToConfig)->update(['title' => 'Hello'])->execute();
         $this->assertTrue($result);
 
         $post = Post::query($this->pathToConfig)->select()->where(['id' => 1])->one();
