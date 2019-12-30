@@ -2,9 +2,10 @@
 
 namespace app\controllers;
 
+use app\framework\core\Controller;
 use app\models\Post;
 
-class PostController
+class PostController extends Controller
 {
     public function actionIndex()
     {

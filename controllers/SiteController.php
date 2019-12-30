@@ -2,7 +2,9 @@
 
 namespace app\controllers;
 
-class SiteController
+use app\framework\core\Controller;
+
+class SiteController extends Controller
 {
     public function actionIndex()
     {

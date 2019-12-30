@@ -44,8 +44,16 @@ class App
     public static function run($config = 'configs/app.php')
     {
         $config = require $config;
-        $router = $config['router'];
 
-        (new $router)->run();
+        $router = $config['router']['package'];
+        $packageControllers = $config['router']['packageControllers'];
+        $baseController = $config['router']['baseController'];
+        $packageDispatcherInterface = $config['router']['dispatcherInterface'];
+
+        (new $router(
+            $packageControllers,
+            $baseController,
+            $packageDispatcherInterface
+        ))->run();
     }
 }

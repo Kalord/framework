@@ -75,12 +75,25 @@ class Router
     private $namespace;
 
     /**
+     * Базовый контроллер
+     * @var string
+     */
+    private $baseController;
+
+    /**
+     * @var string
+     */
+    private $dispatcherInterface;
+
+    /**
      * Router constructor.
-     * @param string $config
      * @param string $namespace
+     * @param string $baseController
+     * @param string $dispatcherInterface
+     * @param string $config
      * @throws Exception
      */
-    public function __construct($config = 'configs/routes.php', $namespace = '\app\controllers\\')
+    public function __construct($namespace, $baseController, $dispatcherInterface, $config = 'configs/routes.php')
     {
         if(!file_exists($config))
         {
@@ -88,6 +101,8 @@ class Router
         }
         $this->routes = require $config;
         $this->namespace = $namespace;
+        $this->baseController = $baseController;
+        $this->dispatcherInterface = $dispatcherInterface;
     }
 
     /**
@@ -146,6 +161,7 @@ class Router
     /**
      * Встраивает маршрут
      * @param array $route
+     * @throws Exception
      */
     private function inlineRoute($route)
     {
@@ -157,7 +173,16 @@ class Router
         $actionName = 'action' . ucfirst(array_shift($dataRoute));
         $ControllerName = $this->getNamespace() . $ControllerName;
 
-        call_user_func_array([new $ControllerName, $actionName], $dataArgs);
+        $ControllerName = new $ControllerName();
+
+        if(get_parent_class($ControllerName) == $this->baseController)
+        {
+            $interfaces = class_implements($this->baseController);
+            if(key_exists($this->dispatcherInterface, $interfaces)) $ControllerName->dispatch();
+            call_user_func_array([$ControllerName, $actionName], $dataArgs);
+            return;
+        }
+        throw new Exception("Controller don't have parent base controller $this->baseController");
     }
 
     /**
