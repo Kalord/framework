@@ -27,4 +27,9 @@ class HTTP
     {
         return $_SERVER['REQUEST_URI'];
     }
+
+    public function redirect($url)
+    {
+        header("Location: $url");
+    }
 }
