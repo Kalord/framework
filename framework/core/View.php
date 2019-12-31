@@ -51,12 +51,15 @@ class View
 
     /**
      * @param string $path
+     * @param array $data
      * @return void
      * @throws Exception
      */
-    private function getView($path)
+    private function getView($path, array $data)
     {
         if(!file_exists($path)) throw new Exception("View in $path not found");
+        extract($data);
+
         require $path;
     }
 
@@ -90,7 +93,7 @@ class View
     public function prepareView($path, $directory, array $data)
     {
         $this->buffering();
-        $this->getView($this->preparePathToView($path, $directory));
+        $this->getView($this->preparePathToView($path, $directory), $data);
         $content = $this->getBuffer();
 
         $this->buffering();
