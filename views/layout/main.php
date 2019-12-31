@@ -7,8 +7,8 @@
     <title>Framework</title>
 </head>
 <body>
-    <header>Header</header>
+    <header><h1>Header</h1></header>
     <?= $content ?>
-    <footer>Footer</footer>
+    <footer><h1>Footer</h1></footer>
 </body>
 </html>
