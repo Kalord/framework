@@ -140,6 +140,8 @@ class Asset
     }
 
     /**
+     * Получение CSS ресурсов
+     *
      * @param array|string|null $options
      * @return string
      */
@@ -157,6 +159,8 @@ class Asset
     }
 
     /**
+     * Получение JavaScript ресурсов
+     *
      * @param array|string|null $options
      * @return string
      */
