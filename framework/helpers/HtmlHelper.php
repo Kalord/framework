@@ -9,8 +9,32 @@ namespace app\framework\helpers;
  */
 class HtmlHelper
 {
-    public static function createLink($rel, $href)
+    /**
+     * @const int
+     */
+    const NOT_CLOSED = 1;
+
+    /**
+     * @const int
+     */
+    const CLOSED = 2;
+
+    /**
+     * @param string $tagName
+     * @param int $closed
+     * @param array $attributes
+     * @return string
+     */
+    public static function create($tagName, $closed, array $attributes)
     {
-        return "<link rel=\"$rel\" href=\"$href\"";
+        $html = "<$tagName ";
+        foreach ($attributes as $attributeName => $attributeValue)
+        {
+            $html .= "$attributeName=\"$attributeValue\" ";
+        }
+        $html .= '>';
+        if($closed == self::CLOSED) $html .= "</$tagName>";
+
+        return $html . "\n";
     }
 }
