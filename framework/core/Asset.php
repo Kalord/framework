@@ -2,6 +2,8 @@
 
 namespace app\framework\core;
 
+use app\framework\helpers\HtmlHelper;
+
 /**
  * Класс для работы с ресурсами сайта
  *
@@ -50,13 +52,124 @@ class Asset
     public $js;
 
     /**
+     * @const int
+     */
+    const CSS = 1;
+
+    /**
+     * @const int
+     */
+    const JS = 2;
+
+    /**
+     * Исключение определенных файлов
+     * @const string
+     */
+    const NOT = 'not';
+
+    /**
+     * @param int $assetType
+     * @param string $asset
+     * @return string
+     */
+    private function getHtml($assetType, $asset)
+    {
+        if($assetType == self::CSS)
+        {
+            return HtmlHelper::create(
+                'link',
+                HtmlHelper::NOT_CLOSED,
+                [
+                    'rel' => 'stylesheet',
+                    'href' => $asset
+                ]
+            );
+        }
+
+        return HtmlHelper::create(
+            'script',
+            HtmlHelper::CLOSED,
+            [
+                'src' => $asset
+            ]
+        );
+    }
+
+    /**
+     * @param int $assetType
+     * @param array $assetList
+     * @return string
+     */
+    private function getAll($assetType, $assetList)
+    {
+        $html = '';
+        foreach ($assetList as $asset)
+        {
+            $html .= $this->getHtml($assetType, $asset);
+        }
+        return $html;
+    }
+
+    /**
+     * @param int $assetType
+     * @param array $assetList
+     * @param array $notList
+     * @return string
+     */
+    private function getBesides($assetType, array $assetList, array $notList)
+    {
+        $html = '';
+        foreach ($assetList as $asset)
+        {
+            if(!in_array($asset, $notList))
+            {
+                $html .= $this->getHtml($assetType, $asset);
+            }
+        }
+        return $html;
+    }
+
+    /**
+     * @param int $assetType
+     * @param string $asset
+     * @return string|null
+     */
+    private function getAsset($assetType, $asset)
+    {
+        return $this->getHtml($assetType, $asset);
+    }
+
+    /**
      * @param array|string|null $options
+     * @return string
      */
     public function getCss($options = null)
     {
-        if(is_array($options) && key_exists('not', $options))
+        if(is_array($options) && key_exists(self::NOT, $options))
         {
-            
+            return $this->getBesides(self::CSS, $this->css, $options[self::NOT]);
         }
+        if(is_string($options))
+        {
+            return $this->getAsset(self::CSS, $options);
+        }
+        return $this->getAll(self::CSS, $this->css);
+    }
+
+    /**
+     * @param array|string|null $options
+     * @return string
+     */
+    public function getJs($options = null)
+    {
+        if(is_array($options) && key_exists(self::NOT, $options))
+        {
+            return $this->getBesides(self::JS, $this->css, $options[self::NOT]);
+        }
+        if(is_string($options))
+        {
+            return $this->getAsset(self::JS, $options);
+        }
+        return $this->getAll(self::JS, $this->js);
     }
 }
