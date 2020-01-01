@@ -33,6 +33,11 @@ class View
     }
 
     /**
+     * Запуск буферизации данных
+     * Если буферизация вывода активна, никакой вывод скрипта не отправляется,
+     * а сохраняется во внутреннем буфере.
+     * @see https://www.php.net/manual/ru/function.ob-start.php
+     *
      * @return void
      */
     private function buffering()
@@ -42,6 +47,9 @@ class View
 
 
     /**
+     * Получает содержимое текущего буфера и затем удаляет текущий буфер.
+     * @see https://www.php.net/manual/ru/function.ob-get-clean.php
+     *
      * @return string|false
      */
     private function getBuffer()
@@ -50,6 +58,8 @@ class View
     }
 
     /**
+     * Получение вида
+     *
      * @param string $path
      * @param array $data
      * @return void
@@ -64,7 +74,9 @@ class View
     }
 
     /**
-     * return void
+     * Получение шаблона
+     *
+     * @return void
      * @param string
      * @throws Exception
      */
@@ -74,26 +86,35 @@ class View
         require $this->layout;
     }
 
-    private function preparePathToView($path, $directory)
+    /**
+     * Данный метод подготавливает путь до вида
+     *
+     * @param string $nameView
+     * @param string $directory
+     * @return string
+     */
+    private function preparePathToView($nameView, $directory)
     {
         $directory = ObjectHelper::classNameWithoutNamespace($directory);
         $directory = mb_strtolower(preg_replace('~Controller$~', '', $directory));
         $sep = DIRECTORY_SEPARATOR;
 
-        return $this->directoryWithViews . $sep . $directory . $sep . $path . '.php';
+        return $this->directoryWithViews . $sep . $directory . $sep . $nameView . '.php';
     }
 
     /**
-     * @param string $path
+     * Данный метод подготавливает вид
+     *
+     * @param string $nameView
      * @param string $directory
      * @param array $data
      * @return object
      * @throws Exception
      */
-    public function prepareView($path, $directory, array $data)
+    public function prepareView($nameView, $directory, array $data)
     {
         $this->buffering();
-        $this->getView($this->preparePathToView($path, $directory), $data);
+        $this->getView($this->preparePathToView($nameView, $directory), $data);
         $content = $this->getBuffer();
 
         $this->buffering();
@@ -104,6 +125,8 @@ class View
     }
 
     /**
+     * Данный метод отображает вид
+     *
      * @param \app\framework\core\RenderProvider $renderProvider
      * @return void
      */
