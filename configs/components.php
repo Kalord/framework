@@ -19,5 +19,8 @@
 return [
     'http' => [
         'package' => '\app\framework\components\network\HTTP'
+    ],
+    'cookie' => [
+        'package' => '\app\framework\components\Cookie'
     ]
 ];
