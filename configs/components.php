@@ -22,5 +22,9 @@ return [
     ],
     'cookie' => [
         'package' => '\app\framework\components\Cookie'
+    ],
+    'user' => [
+        'package' => '\app\framework\components\user\User',
+        'identity' => '\app\models\User'
     ]
 ];
