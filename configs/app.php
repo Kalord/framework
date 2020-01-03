@@ -1,4 +1,7 @@
 <?php
+/**
+ * Конфигурационный файл для приложения
+ */
 return [
     'router' => [
         'package' => 'app\framework\core\Router',
