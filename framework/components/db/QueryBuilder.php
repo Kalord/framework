@@ -24,7 +24,7 @@ class QueryBuilder
      * Хранилище запросов в базу данных
      * @var object
      */
-    private $queryStorage;
+    protected $queryStorage;
 
     /**
      * Объект для выполнения запросов
