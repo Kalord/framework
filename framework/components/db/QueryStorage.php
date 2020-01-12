@@ -2,12 +2,14 @@
 
 namespace app\framework\components\db;
 
+use app\framework\components\db\interfaces\ISQLProvider;
+
 /**
  * Хранилище запросов в базу данных
  * @package app\framework\components\db
  * @author Artem Tyutnev <artem.tyutnev.developer@gmail.com>
  */
-class QueryStorage
+class QueryStorage implements ISQLProvider
 {
     /**
      * @var string|null
@@ -69,7 +71,7 @@ class QueryStorage
      */
     public $limit = null;
 
-    /**
+        /**
      * @return string
      */
     public function getSql()
