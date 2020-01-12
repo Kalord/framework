@@ -7,6 +7,7 @@ use app\framework\core\App;
 use app\framework\helpers\RegExpHelper;
 use app\framework\core\View;
 use app\framework\core\RenderProvider;
+use app\framework\helpers\AppHelper;
 
 /**
  * Роутер определяет контроллер и действие
@@ -168,6 +169,7 @@ class Router
     private function inlineRoute($route)
     {
         $dataRoute = explode('/', array_shift($route));
+
         if(!$this->hasAction($dataRoute)) $dataRoute[] = self::DEFAULT_ACTION;
         $dataArgs = array_shift($route);
 
@@ -203,6 +205,7 @@ class Router
             return;
         }
 
-        $this->inlineRoute([substr($url, 1), []]);
+        $params = AppHelper::isConsoleApp() ? AppHelper::getConsoleArgs() : [];
+        $this->inlineRoute([substr($url, 1), $params]);
     }
 }
