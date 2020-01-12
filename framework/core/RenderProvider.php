@@ -3,6 +3,8 @@
 namespace app\framework\core;
 
 /**
+ * Данный класс является провайдером для данных рендера вида
+ *
  * @package app\framework\core
  * @author Artem Tyutnev <artem.tyutnev.developer@gmail.com>
  */

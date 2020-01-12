@@ -42,11 +42,13 @@ use app\framework\helpers\HtmlHelper;
 class Asset
 {
     /**
+     * Массив со всеми CSS ресурсами
      * @var array
      */
     public $css;
 
     /**
+     * Массив со всеми JS ресурсами
      * @var array
      */
     public $js;
@@ -68,6 +70,10 @@ class Asset
     const NOT = 'not';
 
     /**
+     * Получение HTML по определенному ресурсу и его типу
+     *
+     * Тип определен константами CSS/JS
+     *
      * @param int $assetType
      * @param string $asset
      * @return string
@@ -96,11 +102,13 @@ class Asset
     }
 
     /**
+     * Получение всех ресурсов по определенному типу
+     *
      * @param int $assetType
      * @param array $assetList
      * @return string
      */
-    private function getAll($assetType, $assetList)
+    private function getAll($assetType, array $assetList)
     {
         $html = '';
         foreach ($assetList as $asset)
@@ -111,6 +119,8 @@ class Asset
     }
 
     /**
+     * Получение ресурсов за исключением определенных
+     *
      * @param int $assetType
      * @param array $assetList
      * @param array $notList
@@ -159,7 +169,7 @@ class Asset
     }
 
     /**
-     * Получение JavaScript ресурсов
+     * Получение JS ресурсов
      *
      * @param array|string|null $options
      * @return string
