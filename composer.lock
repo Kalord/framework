@@ -4,8 +4,50 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "090b302a513c19468990c1e457beea5d",
-    "packages": [],
+    "content-hash": "9a83166843ddd107e205bc1e1230781a",
+    "packages": [
+        {
+            "name": "shasoft/console",
+            "version": "v1.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/shasoft/console.git",
+                "reference": "3eb2ed9cce667c26f83bbeb2b80ab9364b44bfc2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/shasoft/console/zipball/3eb2ed9cce667c26f83bbeb2b80ab9364b44bfc2",
+                "reference": "3eb2ed9cce667c26f83bbeb2b80ab9364b44bfc2",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Shasoft\\Console\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Valery Shabanov",
+                    "email": "dev@shasoft.com"
+                }
+            ],
+            "description": "Shasoft Console",
+            "homepage": "http://shasoft.com/article/klass_php_dlya_vyvoda_v_konsol_tsvetnogo_teksta",
+            "keywords": [
+                "color",
+                "colors",
+                "console",
+                "output",
+                "text"
+            ],
+            "time": "2018-12-06T08:55:20+00:00"
+        }
+    ],
     "packages-dev": [
         {
             "name": "doctrine/instantiator",
@@ -1528,6 +1570,9 @@
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "ext-pdo": "*",
+        "ext-mbstring": "*"
+    },
     "platform-dev": []
 }
