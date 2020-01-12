@@ -26,5 +26,11 @@ return [
     'user' => [
         'package' => '\app\framework\components\user\User',
         'identity' => '\app\models\User'
+    ],
+    'fileTemplate' => [
+        'package' => '\app\framework\components\FileTemplate'
+    ],
+    'message' => [
+        'package' => '\app\framework\components\ConsoleMessage'
     ]
 ];
