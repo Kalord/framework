@@ -25,7 +25,8 @@ class HTTP
      */
     public function getUrl()
     {
-        return $_SERVER['REQUEST_URI'];
+        return isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 
+                                                '/' . $_SERVER['argv'][1];
     }
 
     public function redirect($url)
