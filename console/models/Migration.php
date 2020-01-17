@@ -8,6 +8,6 @@ class Migration extends ActiveRecord
 {
     public static function findByName($name)
     {
-        return self::query()->select()->where(['name' => $name]);
+        return self::query()->select()->where(['name' => $name])->one();
     }
 }

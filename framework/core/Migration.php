@@ -81,7 +81,7 @@ abstract class Migration
         $this->DDLQuery = new DDLQuery();
 
         $this->DDLQuery->createTable('migration', [
-            'id INT NOT NULL PRIMARY KEY',
+            'id INT NOT NULL PRIMARY KEY AUTO_INCREMENT',
             'name VARCHAR(255) NOT NULL',
             'time INT NOT NULL'
         ]);
@@ -103,7 +103,8 @@ abstract class Migration
     public function beforeCreate()
     {
         $nameMigration = ObjectHelper::classNameWithoutNamespace(get_called_class());
-        if(!Model::findByName($nameMigration))
+
+        if(Model::findByName($nameMigration))
         {
             $this->setStatusMessage("Migration $nameMigration is relevant\n");
             return false;
