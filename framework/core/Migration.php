@@ -103,7 +103,7 @@ class Migration
     public function beforeCreate()
     {
         $nameMigration = ObjectHelper::classNameWithoutNamespace(get_called_class());
-        if(Model::findByName($nameMigration))
+        if(!Model::findByName($nameMigration))
         {
             $this->setStatusMessage("Migration $nameMigration is relevant\n");
             return false;
@@ -165,5 +165,42 @@ class Migration
     public function primaryKey()
     {
         $this->columnBuilder->createPrimaryKey();
+        return $this;
+    }
+
+    public function integer($length = 11)
+    {
+        $this->columnBuilder->createInteger($length);
+        return $this;
+    }
+
+    public function string($length = 255)
+    {
+        $this->columnBuilder->createVarchar($length);
+        return $this;
+    }
+
+    public function text($length = 10000)
+    {
+        $this->columnBuilder->createText($length);
+        return $this;
+    }
+
+    public function timestamp()
+    {
+        $this->columnBuilder->createCurrentTimestamp();
+        return $this;
+    }
+
+    public function notNull()
+    {
+        $this->columnBuilder->notNull();
+        return $this;
+    }
+
+    public function defaultValue($value)
+    {
+        $this->columnBuilder->defaultValue($value);
+        return $this;
     }
 }
