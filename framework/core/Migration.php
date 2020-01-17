@@ -58,7 +58,7 @@ use app\framework\helpers\ObjectHelper;
  * 
  * @author Artem Tyutnev <artem.tyutnev.developer@gmail.com>
  */
-class Migration
+abstract class Migration
 {
     /**
      * @var object
@@ -162,45 +162,48 @@ class Migration
     /**
      * Устанавливает определенную колонку первичным ключом
      */
-    public function primaryKey()
+    protected function primaryKey()
     {
         $this->columnBuilder->createPrimaryKey();
         return $this;
     }
 
-    public function integer($length = 11)
+    protected function integer($length = 11)
     {
         $this->columnBuilder->createInteger($length);
         return $this;
     }
 
-    public function string($length = 255)
+    protected function string($length = 255)
     {
         $this->columnBuilder->createVarchar($length);
         return $this;
     }
 
-    public function text($length = 10000)
+    protected function text($length = 10000)
     {
         $this->columnBuilder->createText($length);
         return $this;
     }
 
-    public function timestamp()
+    protected function timestamp()
     {
         $this->columnBuilder->createCurrentTimestamp();
         return $this;
     }
 
-    public function notNull()
+    protected function notNull()
     {
         $this->columnBuilder->notNull();
         return $this;
     }
 
-    public function defaultValue($value)
+    protected function defaultValue($value)
     {
         $this->columnBuilder->defaultValue($value);
         return $this;
     }
+
+    abstract public function up();
+    abstract public function down();
 }
