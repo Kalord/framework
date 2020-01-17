@@ -50,6 +50,19 @@ class MigrateController extends Controller
 
     public function actionDown()
     {
+        $migrations = array_slice(FileHelper::getFilesInDirectory('migrations/'), 2);
 
+        if(empty($migrations))
+        {
+            App::component()->message->successMessage("Migrate not found\n");
+            return;
+        }
+
+        foreach($migrations as $migration) 
+        {
+            $migration = preg_replace('~.php~', '', $migration);
+            $migration = "app\\console\\migrations\\$migration";
+            App::component()->message->successMessage((new $migration())->down());
+        }
     }
 }
