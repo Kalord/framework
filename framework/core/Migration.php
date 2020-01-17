@@ -152,12 +152,28 @@ abstract class Migration
         return $this->getStatusMessage();
     }
 
+    public function removeMigration($nameMigration)
+    {
+        return Model::delete($nameMigration);
+    }
+
     /**
      * @param string $tableName
      */
     public function dropTable($tableName)
     {
+        $nameMigration = ObjectHelper::classNameWithoutNamespace(get_called_class());
 
+        if($this->removeMigration($nameMigration) && $this->DDLQuery->dropTable($tableName))
+        {
+            $this->setStatusMessage("$tableName deleted\n");            
+        }
+        else
+        {
+            $this->setStatusMessage("$tableName not deleted\n"); 
+        }
+
+        return $this->getStatusMessage();
     }
 
     /**
