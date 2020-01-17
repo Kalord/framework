@@ -10,4 +10,9 @@ class Migration extends ActiveRecord
     {
         return self::query()->select()->where(['name' => $name])->one();
     }
+
+    public static function delete($name)
+    {
+        return self::query()->delete()->where(['name' => $name])->execute();
+    }
 }
