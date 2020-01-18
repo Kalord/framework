@@ -75,11 +75,31 @@ abstract class Migration
      */
     private $statusMessage;
 
+    /**
+     * Конструктор
+     */
     public function __construct()
     {
         $this->columnBuilder = new ColumnBuilder();
         $this->DDLQuery = new DDLQuery();
 
+        $this->createMigrationTable();
+    }
+
+    /**
+     * Создание таблицы с историей миграций
+     * 
+     * Структура таблицы:
+     *      ++++++++++++++++++++
+     *      + id + name + time +
+     *      ++++++++++++++++++++
+     *      name - название миграции
+     *      time - время применения
+     * 
+     * @return void
+     */
+    private function createMigrationTable()
+    {
         $this->DDLQuery->createTable('migration', [
             'id INT NOT NULL PRIMARY KEY AUTO_INCREMENT',
             'name VARCHAR(255) NOT NULL',
@@ -99,6 +119,8 @@ abstract class Migration
 
     /**
      * Данный метод срабатывает перед созданием таблицы
+     * 
+     * @return bool
      */
     public function beforeCreate()
     {
@@ -152,6 +174,12 @@ abstract class Migration
         return $this->getStatusMessage();
     }
 
+    /**
+     * Удаление миграции из базы данных
+     * 
+     * @param string $nameMigration
+     * @return bool
+     */
     public function removeMigration($nameMigration)
     {
         return Model::delete($nameMigration);

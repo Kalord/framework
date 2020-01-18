@@ -25,17 +25,43 @@ class ColumnBuilder
      */
     const TYPE_INT = 'INT';
 
+    /**
+     * Тип данных - строка переменной длины 
+     * @const string
+     */
+    const TYPE_VARCHAR = 'VARCHAR';
 
+    /**
+     * Тип данных - текст
+     * @const string
+     */
+    const TYPE_TEXT = 'TEXT';
+
+    /**
+     * Добавление колонки
+     * 
+     * @var string $column
+     * @return void
+     */
     private function addColumn($column)
     {
         $this->columns[] = $column;
     }
 
+    /**
+     * Обновление последний колонки
+     * 
+     * @var string $sql
+     * @return void
+     */
     private function updateLastColumn($sql)
     {
         $this->columns[count($this->columns) - 1] .= $sql;
     }
 
+    /**
+     * @return array
+     */
     public function getColumns()
     {
         return $this->columns;
@@ -52,9 +78,15 @@ class ColumnBuilder
         $this->addColumn("$type NOT NULL PRIMARY KEY AUTO_INCREMENT ");
     }
 
+    /**
+     * Создание колонки с типом целого числа
+     * 
+     * @param int $length
+     * @return void
+     */
     public function createInteger($length)
     {
-        $this->addColumn("INT($length) ");
+        $this->addColumn(self::TYPE_INT . "($length) ");
     }
 
     /**
@@ -65,14 +97,23 @@ class ColumnBuilder
      */
     public function createVarchar($length)
     {
-        $this->addColumn("VARCHAR($length) ");
+        $this->addColumn(self::TYPE_VARCHAR . "($length) ");
     }
 
+    /**
+     * Созданик колонки типа text
+     * 
+     * @param int $length
+     * @return void
+     */
     public function createText($length)
     {
-        $this->addColumn("TEXT($length) ");
+        $this->addColumn(self::TYPE_TEXT . "($length) ");
     }
 
+    /**
+     * @return void
+     */
     public function createCurrentTimestamp()
     {
         $this->addColumn("DATETIME DEFAULT CURRENT_TIMESTAMP ");
@@ -86,6 +127,10 @@ class ColumnBuilder
         $this->updateLastColumn('NOT NULL ');
     }
 
+    /**
+     * @param mixed $value
+     * @return void
+     */
     public function defaultValue($value)
     {
         $this->updateLastColumn("DEFAULT $value ");

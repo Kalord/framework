@@ -51,6 +51,12 @@ class DDLQuery
         return $this->db->query("CREATE TABLE $tableName ($columns)");
     }
 
+    /**
+     * Удаление таблицы
+     * 
+     * @param string $tableName
+     * @return void
+     */
     public function dropTable($tableName)
     {
         return $this->db->query("DROP TABLE $tableName");
