@@ -5,6 +5,8 @@ namespace app\framework\core;
 use Exception;
 use app\framework\components\db\QueryBuilder;
 use app\framework\helpers\ObjectHelper;
+use app\framework\components\ErrorDataStorage;
+use app\framework\components\data\Validator;
 
 /**
  * ActiveRecord - паттерн проектирования, предоставляющий объектно-ориентированную модель для доступа к данным
@@ -71,6 +73,12 @@ abstract class ActiveRecord
      * @var array
      */
     private $dataCast = [];
+
+    /**
+     * Хранилище ошибок валидации
+     * @var object
+     */
+    private $errorStorage;
 
     /**
      * @param string $pathToConfig
@@ -198,5 +206,60 @@ abstract class ActiveRecord
     public static function tableName()
     {
         return lcfirst(ObjectHelper::classNameWithoutNamespace(get_called_class()));
+    }
+
+    /**
+     * Валидация данных
+     * 
+     * Данный метод получает данные для валидации
+     * из метода rules
+     * @see rules
+     * 
+     * @return bool
+     */
+    public function validate()
+    {
+        $this->errorStorage = new ErrorDataStorage();
+        $validator = new Validator();
+
+        return $validator->validate($this, $this->rules(), $this->errorStorage);
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasErrors()
+    {
+        return $this->errorStorage->hasErrors();
+    }
+
+    /**
+     * Получение ошибок валидации
+     * 
+     * @return array
+     */
+    public function getErrors()
+    {
+        return $this->errorStorage->getErrors();
+    }
+
+    /**
+     * Получение первой ошибки валидации
+     * 
+     * @return string
+     */
+    public function firstError()
+    {
+        return $this->errorStorage->firstError();
+    }
+
+    /**
+     * Правила валидации
+     * 
+     * @return array
+     */
+    protected function rules()
+    {
+        return [];
     }
 }
