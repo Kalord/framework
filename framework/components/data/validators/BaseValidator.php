@@ -37,7 +37,6 @@ abstract class BaseValidator
      */
     public function run($propertyName, $data)
     {
-        if(!$this->args) return;
         if($result = $this->defaultValidator($data))
         {
             $this->errorStorage->setError($propertyName, $result);
