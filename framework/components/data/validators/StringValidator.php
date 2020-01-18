@@ -10,14 +10,13 @@ use app\framework\components\data\validators\BaseValidator;
  */
 class StringValidator extends BaseValidator
 {
-    public function defaultValidator()
+    public function defaultValidator($data)
     {
-        if(!is_string($this->getDataForValidation())) return 'Данные не являются строкой';
+        if(!is_string($data)) return 'Данные не являются строкой';
     }
 
-    public function length($min, $max)
+    public function length($data, $min, $max)
     {
-        $data = $this->getDataForValidation();
         if(strlen($data) < $min) return "Строка должна быть больше, чем $min";
         if(strlen($data) > $max) return "Строка должна быть меньше, чем $max";
     }

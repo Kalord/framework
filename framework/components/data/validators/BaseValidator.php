@@ -11,12 +11,6 @@ use app\framework\components\ErrorDataStorage;
 abstract class BaseValidator
 {
     /**
-     * @var mixed
-     */
-    protected $data;
-
-
-    /**
      * @var array
      */
     protected $args;
@@ -31,33 +25,32 @@ abstract class BaseValidator
      * @param array|null $args
      * @param object $errorStorage
      */
-    public function __construct($data, $args, ErrorDataStorage $errorStorage)
+    public function __construct($args, ErrorDataStorage $errorStorage)
     {
-        $this->data = $data;
         $this->args = $args;
         $this->errorStorage = $errorStorage;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getDataForValidation()
-    {
-        return $this->data;
     }
 
     /**
      * @param string $propertyName
      * @param array $data
      */
-    public function run($propertyName)
+    public function run($propertyName, $data)
     {
         if(!$this->args) return;
+        if($result = $this->defaultValidator($data))
+        {
+            $this->errorStorage->setError($propertyName, $result);
+            return;
+        }
 
         foreach($this->args as $methodName => $params)
         {
+            $params = array_merge([$data], $params);
             $result = call_user_func_array([$this, $methodName], $params);
             if($result) $this->errorStorage->setError($propertyName, $result);
         }
     }
+
+    abstract public function defaultValidator($data);
 }

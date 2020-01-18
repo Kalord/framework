@@ -44,18 +44,25 @@ class Validator
         foreach($data as $item)
         {
             $propertyName = array_shift($item);
-            $dataForValidation = $model->$propertyName;
-            $validatorName = self::validatorPackage . ucfirst(array_shift($item)) . 'Validator';
-            $args = array_shift($item);
+            $dataForValidation = [];
 
-            $validator = new $validatorName($dataForValidation, $args, $errorStorage);
-            if($result = $validator->defaultValidator())
+            if(is_array($propertyName))
             {
-                $errorStorage->setError($propertyName, $result);
-                break;
+                foreach($propertyName as $property) $dataForValidation[$property] = $model->$property;
+            }
+            else
+            {
+                $dataForValidation[$propertyName] = $model->$propertyName;
             }
 
-            $validator->run($propertyName);
+            $validatorName = self::validatorPackage . ucfirst(array_shift($item)) . 'Validator';
+            $args = array_shift($item);
+            $validator = new $validatorName($args, $errorStorage);
+
+            foreach($dataForValidation as $property => $value)
+            {
+                $validator->run($property, $value);
+            }
         }
 
         return !$errorStorage->hasErrors();
