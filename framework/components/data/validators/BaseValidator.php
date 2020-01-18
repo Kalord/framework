@@ -43,6 +43,7 @@ abstract class BaseValidator
             return;
         }
 
+        if(!$this->args) return;
         foreach($this->args as $methodName => $params)
         {
             $params = array_merge([$data], $params);
